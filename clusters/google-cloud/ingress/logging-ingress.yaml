@@ -1,0 +1,35 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gcp-logging-ingress
+  namespace: logging
+  annotations:
+    # Áp dụng thuật toán Leaky Bucket Rate Limiting bảo vệ cổng nhận Log
+    nginx.ingress.kubernetes.io/limit-rps: "100"
+    nginx.ingress.kubernetes.io/limit-burst-multiplier: "2"
+    nginx.ingress.kubernetes.io/limit-connections: "50"
+spec:
+  ingressClassName: nginx
+  rules:
+  # 1. Endpoint đón Log HTTPS từ Fluent Bit On-premise gửi lên
+  - host: logs.chausu.name.vn
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: elasticsearch
+            port:
+              number: 9200
+  # 2. Giao diện Web UI Kibana cho kỹ sư truy cập
+  - host: kibana.chausu.name.vn
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: kibana
+            port:
+              number: 5601
