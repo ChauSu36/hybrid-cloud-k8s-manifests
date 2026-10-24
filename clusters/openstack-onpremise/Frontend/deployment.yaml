@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jobportal-frontend-deployment
+  labels:
+    app: jobportal-frontend
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: jobportal-frontend
+  template:
+    metadata:
+      labels:
+        app: jobportal-frontend
+    spec:
+      containers:
+      - name: jobportal-frontend
+        image: chausu/jobportal-frontend:6dea8372fb71996d897066be4f7d06b974c23fff
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "200m"
+            memory: "256Mi"
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "chmod -R 755 /usr/share/nginx/html/assets"]
