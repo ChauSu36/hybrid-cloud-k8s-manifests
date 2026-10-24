@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jobportal-backend-deployment
+  namespace: jobportal
+  labels:
+    app: jobportal-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jobportal-backend
+  template:
+    metadata:
+      labels:
+        app: jobportal-backend
+    spec:
+      containers:
+      - name: jobportal-backend
+        image: chausu/jobportal-backend:6dea8372fb71996d897066be4f7d06b974c23fff
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: jobportal-backend-config
+        - secretRef:
+            name: jobportal-backend-secret

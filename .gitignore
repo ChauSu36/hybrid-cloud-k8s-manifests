@@ -1,2 +1,3 @@
 *.tgz
 ingress-nginx/
+**/secret.yaml
