@@ -4,10 +4,10 @@ metadata:
   name: jobportal-backend-config
   namespace: jobportal
 data:
-  SPRING_DATASOURCE_URL: "jdbc:mysql://192.168.233.115:3306/jobportal?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true"
+  SPRING_DATASOURCE_URL: "jdbc:mysql://mysql-service.jobportal.svc.cluster.local:3306/jobportal?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true"
   SPRING_DATASOURCE_USERNAME: "jobportal_user"
-  APP_CORS_ALLOWEDORIGINS: "https://k8s-onpremise.chausu.name.vn,http://localhost:3000"
-  CORS_ALLOWED_ORIGINS: "https://k8s-onpremise.chausu.name.vn,http://localhost:3000"
+  APP_CORS_ALLOWEDORIGINS: "https://www.chausu.name.vn,http://localhost:3000"
+  CORS_ALLOWED_ORIGINS: "https://www.chausu.name.vn,http://localhost:3000"
   # Bật Actuator Prometheus để đẩy metrics lên Google Cloud
   MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info,prometheus"
   MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED: "true"
