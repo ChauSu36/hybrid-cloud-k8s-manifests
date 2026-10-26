@@ -21,7 +21,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: gcp-monitoring-kube-prometheus-prometheus
+            name: gcp-monitoring-kube-promet-prometheus
             port:
               number: 9090
 
