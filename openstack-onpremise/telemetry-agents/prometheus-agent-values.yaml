@@ -1,0 +1,46 @@
+# 1. Tắt Grafana và Alertmanager cục bộ vì đã đặt tập trung trên Google Cloud
+grafana:
+  enabled: false
+
+alertmanager:
+  enabled: false
+
+prometheusOperator:
+  enabled: true
+
+# 2. Bật các Exporter đo đạc phần cứng máy ảo và trạng thái tài nguyên K8s
+nodeExporter:
+  enabled: true
+kubeStateMetrics:
+  enabled: true
+
+# 3. Kích hoạt chế độ Agent siêu nhẹ và cấu hình đẩy dữ liệu qua Google Cloud
+prometheus:
+  prometheusSpec:
+    # Bật Agent Mode (không lưu TSDB nặng vào đĩa, không cần PVC)
+    enableFeatures:
+      - agent
+
+    # Gán nhãn để phân biệt số liệu của cụm OpenStack trên Grafana Cloud
+    externalLabels:
+      cluster: "openstack-onpremise"
+      environment: "private-cloud"
+
+    # Chu kỳ cào dữ liệu nội bộ
+    scrapeInterval: 15s
+    evaluationInterval: 15s
+
+    # Tự động nhận diện ServiceMonitor / PodMonitor của các ứng dụng trong cụm
+    podMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
+
+    # CẤU HÌNH ĐẨY DỮ LIỆU SANG GOOGLE CLOUD (REMOTE WRITE)
+    remoteWrite:
+      - url: "https://metrics.chausu.name.vn/api/v1/write"
+        # Thuật toán điều tiết lưu lượng (Traffic Shaping / Leaky-Token Bucket)
+        queueConfig:
+          capacity: 2500          # Sức chứa hàng đợi đệm (Bucket size W)
+          maxSamplesPerSend: 500  # Số mẫu tối đa gửi trong 1 đợt (Batch size)
+          batchSendDeadline: 5s   # Thời gian tối đa gom batch trước khi gửi
+          minShards: 1
+          maxShards: 5            # Giới hạn số luồng đẩy song song tránh nghẽn mạng
