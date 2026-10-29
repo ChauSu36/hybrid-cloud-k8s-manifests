@@ -1,6 +1,13 @@
 prometheus:
   prometheusSpec:
+    # 1. Kích hoạt endpoint /api/v1/write đón Remote Write từ On-premise
     enableRemoteWriteReceiver: true
+
+    # 2. BẬT TIẾP NHẬN DỮ LIỆU LỆCH THỨ TỰ THỜI GIAN (XỬ LÝ DỨT ĐIỂM OUT-OF-ORDER)
+    tsdb:
+      outOfOrderTimeWindow: 30m
+
+    # 3. Phân vùng lưu trữ dữ liệu TSDB 20Gi bằng Cloud Persistent Disk
     storageSpec:
       volumeClaimTemplate:
         spec:
@@ -8,9 +15,9 @@ prometheus:
           accessModes: ["ReadWriteOnce"]
           resources:
             requests:
-              storage: 40Gi
+              storage: 30Gi
 
-# Bật ổ đĩa Cloud cho Grafana:
+# 4. Bảo lưu cấu hình Dashboard và tài khoản Grafana trên Cloud Persistent Disk 10Gi
 grafana:
   persistence:
     enabled: true
