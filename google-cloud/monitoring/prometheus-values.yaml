@@ -1,0 +1,19 @@
+prometheus:
+  prometheusSpec:
+    enableRemoteWriteReceiver: true
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: standard-rwo
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 40Gi
+
+# Bật ổ đĩa Cloud cho Grafana:
+grafana:
+  persistence:
+    enabled: true
+    storageClassName: standard-rwo
+    accessModes: ["ReadWriteOnce"]
+    size: 20Gi
