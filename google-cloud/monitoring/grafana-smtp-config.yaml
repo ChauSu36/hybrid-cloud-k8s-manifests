@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-smtp-config
+  namespace: monitoring
+data:
+  GF_SMTP_ENABLED: "true"
+  GF_SMTP_HOST: "smtp.gmail.com:587"
+  GF_SMTP_FROM_NAME: "Grafana K8s Monitoring"
+  GF_SMTP_STARTTLS_POLICY: "OpportunisticStartTLS"

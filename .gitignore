@@ -1,3 +1,5 @@
 *.tgz
 ingress-nginx/
 **/secret.yaml
+**/grafana-smtp-secret.yaml
+**/*secret.yaml
