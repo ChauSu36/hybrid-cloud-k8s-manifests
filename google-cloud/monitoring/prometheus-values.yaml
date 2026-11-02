@@ -5,9 +5,9 @@ prometheus:
 
     # 2. BẬT TIẾP NHẬN DỮ LIỆU LỆCH THỨ TỰ THỜI GIAN (XỬ LÝ DỨT ĐIỂM OUT-OF-ORDER)
     tsdb:
-      outOfOrderTimeWindow: 30m
+      outOfOrderTimeWindow: 24h
 
-    # 3. Phân vùng lưu trữ dữ liệu TSDB 20Gi bằng Cloud Persistent Disk
+    # 3. Phân vùng lưu trữ dữ liệu TSDB 30Gi bằng Cloud Persistent Disk
     storageSpec:
       volumeClaimTemplate:
         spec:
@@ -17,7 +17,7 @@ prometheus:
             requests:
               storage: 30Gi
 
-# 4. Bảo lưu cấu hình Dashboard và tài khoản Grafana trên Cloud Persistent Disk 10Gi
+# 4. Bảo lưu cấu hình Dashboard và tài khoản Grafana trên Cloud Persistent Disk 20Gi
 grafana:
   persistence:
     enabled: true
