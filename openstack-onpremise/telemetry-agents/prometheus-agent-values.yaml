@@ -20,12 +20,21 @@ prometheus:
     # Bật Agent Mode (không lưu TSDB nặng vào đĩa, không cần PVC)
     enableFeatures:
       - agent
+    
+    # Định mức tài nguyên cho Agent Pod (Tránh bị bóp CPU/tràn RAM khi dồn tải cao)
+    resources:
+      requests:
+        cpu: 200m
+        memory: 256Mi
+      limits:
+        cpu: 1000m
+        memory: 1Gi
 
     # Gán nhãn để phân biệt số liệu của cụm OpenStack trên Grafana Cloud
     externalLabels:
       cluster: "openstack-onpremise"
       environment: "private-cloud"
-
+    
     # Chu kỳ cào dữ liệu nội bộ
     scrapeInterval: 15s
     evaluationInterval: 15s
@@ -39,8 +48,8 @@ prometheus:
       - url: "https://metrics.chausu.name.vn/api/v1/write"
         # Thuật toán điều tiết lưu lượng (Traffic Shaping / Leaky-Token Bucket)
         queueConfig:
-          capacity: 2500          # Sức chứa hàng đợi đệm (Bucket size W)
-          maxSamplesPerSend: 500  # Số mẫu tối đa gửi trong 1 đợt (Batch size)
+          capacity: 15000          # Sức chứa hàng đợi đệm (Bucket size W)
+          maxSamplesPerSend: 5000  # Số mẫu tối đa gửi trong 1 đợt (Batch size)
           batchSendDeadline: 5s   # Thời gian tối đa gom batch trước khi gửi
-          minShards: 1
-          maxShards: 5            # Giới hạn số luồng đẩy song song tránh nghẽn mạng
+          minShards: 4
+          maxShards: 200            # Giới hạn số luồng đẩy song song tránh nghẽn mạng
