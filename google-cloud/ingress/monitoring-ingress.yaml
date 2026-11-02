@@ -4,12 +4,8 @@ metadata:
   name: gcp-monitoring-ingress
   namespace: monitoring
   annotations:
-    # Thuật toán Token/Leaky Bucket Rate Limiting bảo vệ cổng đón Cloud
-    nginx.ingress.kubernetes.io/limit-rps: "100"
-    nginx.ingress.kubernetes.io/limit-burst-multiplier: "2"
-    nginx.ingress.kubernetes.io/limit-connections: "50"
     # Mở rộng kích thước gói tin đón batch Remote Write từ Prometheus Agent
-    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
 spec:
   ingressClassName: nginx
   rules:
