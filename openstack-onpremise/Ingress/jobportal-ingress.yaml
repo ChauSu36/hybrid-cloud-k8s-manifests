@@ -38,6 +38,16 @@ metadata:
     nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization,X-Request-ID"
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
     nginx.ingress.kubernetes.io/cors-max-age: "1728000"
+
+    # --- THUẬT TOÁN TOKEN BUCKET / LEAKY BUCKET RATE LIMITING ---
+    # Tốc độ nạp token trung bình r (50 req/s)
+    nginx.ingress.kubernetes.io/limit-rps: "50"
+    # Dung lượng xô bùng nổ W = limit-rps * 2 = 100 tokens
+    nginx.ingress.kubernetes.io/limit-burst-multiplier: "2"
+    # Trả về mã lỗi chuẩn HTTP 429 (Too Many Requests) khi cạn token
+    nginx.ingress.kubernetes.io/limit-req-status-code: "429"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      limit_req_status 429;
 spec:
   ingressClassName: nginx
   rules:
