@@ -28,12 +28,36 @@ The core objective of this project is to separate the application workloads from
 - **GitOps Delivery:** Managed cloud resources and configurations declaratively using ArgoCD and Helm charts for reproducible rollouts.
 
 ## 📂 Repository Structure
+
 ```text
 hybrid-cloud-k8s-manifests/
-├── openstack-onpremise/
-│   ├── app-jobportal/         # ReactJS, Spring Boot, MySQL manifests
-│   ├── ingress/               # Nginx Ingress with Token Bucket config
-│   └── telemetry-agents/      # Prometheus Agent & Fluent Bit DaemonSet
-└── google-cloud/
-    ├── monitoring/            # Central Prometheus, Grafana, Alertmanager
-    └── logging/               # Elasticsearch & Kibana manifests
+├── Locust/                             # Distributed load testing scenarios & stress profiling scripts
+│   └── ...
+├── google-cloud/                       # Centralized observability & management cluster on GCP
+│   ├── ingress/                        # Cloud Ingress definitions, TLS termination & external routing
+│   ├── logging/                        # Centralized logging stack (Elasticsearch, Logstash/Fluent Bit, Kibana)
+│   └── monitoring/                     # Central observability hub (Prometheus remote-write endpoint, Grafana, Alertmanager)
+├── images/                             # System architecture diagrams and dashboard snapshots
+├── openstack-onpremise/                # On-premise workload cluster (OpenStack private cloud tenant)
+│   ├── Backend/                        # Spring Boot microservice manifests
+│   │   ├── configmap.yaml              # Runtime environment variables and endpoint parameters
+│   │   ├── deployment.yaml             # Pod specifications, replicas, and rolling update strategy
+│   │   └── service.yaml                # ClusterIP service for internal network discovery
+│   ├── Frontend/                       # React.js single-page application manifests
+│   │   ├── deployment.yaml             # Nginx-backed web server workload
+│   │   └── service.yaml                # Internal routing service
+│   ├── Ingress/                        # Edge routing and ingress definitions
+│   │   ├── argocd-ingress.yaml         # Ingress rules for ArgoCD web interface
+│   │   └── jobportal-ingress.yaml      # Public ingress with TLS termination and traffic routing
+│   ├── database/                       # State-managed persistence layer
+│   │   ├── pvc.yaml                    # PersistentVolumeClaim binding database storage
+│   │   ├── service.yaml                # Headless/ClusterIP service for MySQL routing
+│   │   └── statefulset.yaml            # StatefulSet controller ensuring stable network identities
+│   ├── storage/                        # Persistent storage provisioning
+│   │   └── mysql-pv.yaml               # Cluster PersistentVolume configuration
+│   ├── telemetry-agents/               # Cluster observability and metric scraping agents
+│   │   ├── metrics-server.yaml         # Core resource metric pipeline powering HPA
+│   │   └── prometheus-agent-values.yaml# Helm values for Prometheus agent remote-write telemetry
+│   └── kustomization.yaml              # Kustomize entrypoint orchestrating resource trees & image overrides
+├── .gitignore                          # Excludes sensitive secrets, local tokens, and ephemeral cache
+└── README.md                           # Documentation, architecture blueprint, and GitOps guidelines
