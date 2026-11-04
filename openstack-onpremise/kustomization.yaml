@@ -10,7 +10,6 @@ resources:
   - Ingress/argocd-ingress.yaml
   - Ingress/jobportal-ingress.yaml
   - database/pvc.yaml
-  - database/secret.yaml
   - database/service.yaml
   - database/statefulset.yaml
   - storage/mysql-pv.yaml
