@@ -4,10 +4,7 @@ metadata:
   name: gcp-logging-ingress
   namespace: logging
   annotations:
-    # Áp dụng thuật toán Leaky Bucket Rate Limiting bảo vệ cổng nhận Log
-    nginx.ingress.kubernetes.io/limit-rps: "100"
-    nginx.ingress.kubernetes.io/limit-burst-multiplier: "2"
-    nginx.ingress.kubernetes.io/limit-connections: "50"
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
 spec:
   ingressClassName: nginx
   rules:
