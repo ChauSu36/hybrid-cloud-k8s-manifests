@@ -6,7 +6,7 @@ This repository contains the declarative Kubernetes manifests and configuration 
 The core objective of this project is to separate the application workloads from the heavy observability stack, ensuring high availability and zero resource contention. It features cross-cluster metric forwarding, centralized logging, and Ingress rate-limiting to protect the system against bursty traffic.
 
 ## 🏗️ System Architecture
-![Hybrid-Cloud Architecture](assets/hybrid-cloud-architecture.png)
+![Hybrid-Cloud Architecture](images/hybrid-cloud-architecture.png)
 
 **Traffic Flow:**
 1. **End-users & Load Testing:** Traffic is routed through Cloudflare Edge (WAF/CDN) via a secure Cloudflare Tunnel to the OpenStack workload cluster.
