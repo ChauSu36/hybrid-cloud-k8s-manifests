@@ -1,0 +1,29 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: jobportal
+  name: jobportal-dev-role
+rules:
+  # Cho phép xem Pod, đọc log để debug, quản lý Service và ConfigMap trong namespace jobportal
+  - apiGroups: [""]
+    resources: ["pods", "pods/log", "services", "configmaps"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+  # Cho phép triển khai, cập nhật image và scale Deployment (Frontend & Backend)
+  - apiGroups: ["apps"]
+    resources: ["deployments", "replicasets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: jobportal-dev-binding
+  namespace: jobportal
+subjects:
+  - kind: User
+    name: dev-su
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: jobportal-dev-role
+  apiGroup: rbac.authorization.k8s.io
