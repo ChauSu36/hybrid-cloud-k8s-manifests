@@ -29,7 +29,7 @@ spec:
       containers:
       - name: jobportal-backend
         image: chausu/jobportal-backend:1d5a091783725eefedbd0d2d73062c7da13192ab
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
         securityContext:
