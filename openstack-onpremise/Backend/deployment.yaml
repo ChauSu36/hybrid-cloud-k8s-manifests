@@ -20,12 +20,23 @@ spec:
       labels:
         app: jobportal-backend
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       containers:
       - name: jobportal-backend
         image: chausu/jobportal-backend:1d5a091783725eefedbd0d2d73062c7da13192ab
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: ["ALL"]
         resources:
           requests:
             cpu: "200m"
@@ -38,3 +49,9 @@ spec:
             name: jobportal-backend-config
         - secretRef:
             name: jobportal-backend-secret
+        volumeMounts:
+        - name: tmp-volume
+          mountPath: /tmp
+      volumes:
+      - name: tmp-volume
+        emptyDir: {}

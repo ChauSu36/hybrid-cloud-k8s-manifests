@@ -19,12 +19,23 @@ spec:
       labels:
         app: jobportal-frontend
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        runAsGroup: 101
+        fsGroup: 101
       containers:
       - name: jobportal-frontend
         image: chausu/jobportal-frontend:1d5a091783725eefedbd0d2d73062c7da13192ab
         imagePullPolicy: Always
         ports:
-        - containerPort: 80
+        - containerPort: 8080
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: ["ALL"]
         resources:
           requests:
             cpu: "100m"
@@ -32,7 +43,17 @@ spec:
           limits:
             cpu: "200m"
             memory: "256Mi"
-        lifecycle:
-          postStart:
-            exec:
-              command: ["/bin/sh", "-c", "chmod -R 755 /usr/share/nginx/html/assets"]
+        volumeMounts:
+        - name: nginx-cache
+          mountPath: /var/cache/nginx
+        - name: nginx-run
+          mountPath: /var/run
+        - name: tmp-volume
+          mountPath: /tmp
+      volumes:
+      - name: nginx-cache
+        emptyDir: {}
+      - name: nginx-run
+        emptyDir: {}
+      - name: tmp-volume
+        emptyDir: {}
