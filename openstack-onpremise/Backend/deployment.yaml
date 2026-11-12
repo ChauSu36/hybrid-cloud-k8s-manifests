@@ -50,8 +50,12 @@ spec:
         - secretRef:
             name: jobportal-backend-secret
         volumeMounts:
-        - name: tmp-volume
-          mountPath: /tmp
-      volumes:
-      - name: tmp-volume
-        emptyDir: {}
+     - name: tmp-volume
+       mountPath: /tmp
+     - name: uploads-volume
+       mountPath: /app/uploads
+   volumes:
+   - name: tmp-volume
+     emptyDir: {}
+   - name: uploads-volume
+     emptyDir: {}
