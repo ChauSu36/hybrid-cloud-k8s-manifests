@@ -14,3 +14,4 @@ resources:
   - database/statefulset.yaml
   - storage/mysql-pv.yaml
   - telemetry-agents/metrics-server.yaml
+  - rbac/jobportal-rbac.yaml
