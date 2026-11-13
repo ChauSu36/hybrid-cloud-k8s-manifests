@@ -13,6 +13,16 @@ The core objective of this project is to separate the application workloads from
 2. **Workload Cluster (OpenStack):** Hosts the Job Portal web application. Nginx Ingress filters and rate-limits traffic using the Token Bucket algorithm.
 3. **Observability Hub (GKE):** Prometheus Agents on OpenStack push telemetry data (via Remote Write) to the Central Prometheus Server on GKE. Alertmanager triggers notifications if resource thresholds are breached.
 
+
+## 🛡️ Rate Limiting & Traffic Control Algorithm
+![Rate Limiting Algorithm](images/Algorithm.png)
+
+**Algorithm Comparison & Selection:**
+1. **Token Bucket (Selected):** Tokens are added to the bucket at a fixed rate. Each incoming request consumes a token to proceed; if the bucket is empty, excess requests are rejected with `HTTP 429 (Too Many Requests)`. This allows short bursts of legitimate traffic while maintaining an average rate limit.
+2. **Leaky Bucket (Alternative):** Requests enter a queue and are processed at a constant output rate regardless of incoming traffic spikes, dropping any overflow when the queue is full.
+3. **Implementation in Architecture:** Deployed on the **Nginx Ingress Controller** within the **OpenStack Workload Cluster** to protect the Job Portal backend services[cite: 2] from DDoS attacks and sudden load spikes during stress testing.
+
+
 ## 🛠️ Tech Stack
 - **Cloud Infrastructure:** Google Kubernetes Engine (GKE), OpenStack.
 - **Container Orchestration:** Kubernetes, Docker, Helm, ArgoCD (GitOps).
