@@ -14,12 +14,29 @@ spec:
       labels:
         app: mysql
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
       containers:
       - name: mysql
-        image: mysql:8.0
+        image: mysql:8.0.39
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3306
           name: mysql
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "512Mi"
+          limits:
+            cpu: "500m"
+            memory: "1Gi"
         envFrom:
         - secretRef:
             name: mysql-secret
