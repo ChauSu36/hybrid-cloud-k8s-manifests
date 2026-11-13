@@ -20,7 +20,7 @@ The core objective of this project is to separate the application workloads from
 **Algorithm Comparison & Selection:**
 1. **Token Bucket (Selected):** Tokens are added to the bucket at a fixed rate. Each incoming request consumes a token to proceed; if the bucket is empty, excess requests are rejected with `HTTP 429 (Too Many Requests)`. This allows short bursts of legitimate traffic while maintaining an average rate limit.
 2. **Leaky Bucket (Alternative):** Requests enter a queue and are processed at a constant output rate regardless of incoming traffic spikes, dropping any overflow when the queue is full.
-3. **Implementation in Architecture:** Deployed on the **Nginx Ingress Controller** within the **OpenStack Workload Cluster** to protect the Job Portal backend services[cite: 2] from DDoS attacks and sudden load spikes during stress testing.
+3. **Implementation in Architecture:** Deployed on the **Nginx Ingress Controller** within the **OpenStack Workload Cluster** to protect the Job Portal backend services from DDoS attacks and sudden load spikes during stress testing.
 
 
 ## 🛠️ Tech Stack
