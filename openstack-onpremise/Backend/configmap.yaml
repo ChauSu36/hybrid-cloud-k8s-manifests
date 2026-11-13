@@ -8,6 +8,8 @@ data:
   SPRING_DATASOURCE_USERNAME: "jobportal_user"
   APP_CORS_ALLOWEDORIGINS: "https://www.chausu.name.vn,http://localhost:3000"
   CORS_ALLOWED_ORIGINS: "https://www.chausu.name.vn,http://localhost:3000"
+  FILE_UPLOAD_DIR: "/app/uploads"
+  FILE_TEMP_EXPORT_EXCEL: "/tmp"
   # Bật Actuator Prometheus để đẩy metrics lên Google Cloud
   MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info,prometheus"
   MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED: "true"
