@@ -58,6 +58,9 @@ data:
         scrape_interval: 10s
         static_configs:
           - targets: ['jobportal-backend-service.jobportal.svc.cluster.local:8080']
+      - job_name: 'openstack-prometheus-agent'
+        static_configs:
+          - targets: ['localhost:9090']
 ---
 apiVersion: apps/v1
 kind: Deployment
