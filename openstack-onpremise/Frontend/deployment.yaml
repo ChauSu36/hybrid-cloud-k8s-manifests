@@ -27,7 +27,7 @@ spec:
         fsGroup: 101
       containers:
       - name: jobportal-frontend
-        image: chausu/jobportal-frontend:1d5a091783725eefedbd0d2d73062c7da13192ab
+        image: chausu/jobportal-frontend:4540463ec7528c960a28c837a6e6694636f57933
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
