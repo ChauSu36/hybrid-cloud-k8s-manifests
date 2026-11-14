@@ -1,0 +1,95 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-agent-conf
+  namespace: monitoring
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+      external_labels:
+        cluster: "openstack-onpremise"
+        environment: "private-cloud"
+
+    remote_write:
+      - url: "https://metrics.chausu.name.vn/api/v1/write"
+        queue_config:
+          capacity: 2500
+          max_samples_per_send: 500
+          batch_send_deadline: 5s
+          min_shards: 1
+          max_shards: 5
+
+    scrape_configs:
+      - job_name: 'openstack-node-exporter'
+        kubernetes_sd_configs:
+          - role: endpoints
+            namespaces:
+              names: ['monitoring']
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_service_name]
+            action: keep
+            regex: node-exporter-svc
+          - source_labels: [__meta_kubernetes_endpoint_node_name]
+            target_label: node
+
+      - job_name: 'openstack-kube-state-metrics'
+        static_configs:
+          - targets: ['kube-state-metrics-svc.monitoring.svc.cluster.local:8080']
+
+      - job_name: 'openstack-cadvisor'
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+          insecure_skip_verify: true
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        kubernetes_sd_configs:
+          - role: node
+        relabel_configs:
+          - target_label: __address__
+            replacement: kubernetes.default.svc:443
+          - source_labels: [__meta_kubernetes_node_name]
+            regex: (.+)
+            target_label: __metrics_path__
+            replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
+
+      - job_name: 'jobportal-backend'
+        metrics_path: '/actuator/prometheus'
+        scrape_interval: 10s
+        static_configs:
+          - targets: ['jobportal-backend-service.jobportal.svc.cluster.local:8080']
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-agent
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus-agent
+  template:
+    metadata:
+      labels:
+        app: prometheus-agent
+    spec:
+      serviceAccountName: prometheus-agent
+      containers:
+        - name: prometheus
+          image: prom/prometheus:v2.51.0
+          args:
+            - "--config.file=/etc/prometheus/prometheus.yml"
+            - "--storage.agent.path=/prometheus-wal"
+            - "--enable-feature=agent"
+          volumeMounts:
+            - name: config-vol
+              mountPath: /etc/prometheus
+            - name: wal-storage
+              mountPath: /prometheus-wal
+      volumes:
+        - name: config-vol
+          configMap:
+            name: prometheus-agent-conf
+        - name: wal-storage
+          emptyDir: {}
