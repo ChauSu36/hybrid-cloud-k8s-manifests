@@ -15,3 +15,5 @@ resources:
   - storage/mysql-pv.yaml
   - telemetry-agents/metrics-server.yaml
   - rbac/jobportal-rbac.yaml
+  - storage/backend-upload-pv.yaml
+  - database/backend-upload-pvc.yaml
