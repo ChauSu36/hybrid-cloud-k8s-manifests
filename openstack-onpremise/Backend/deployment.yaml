@@ -58,4 +58,5 @@ spec:
       - name: tmp-volume
         emptyDir: {}
       - name: uploads-volume
-        emptyDir: {}
+        persistentVolumeClaim:
+          claimName: backend-upload-pvc
