@@ -17,10 +17,12 @@ WORKDIR /app
 COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-COPY schemas.py collector.py analyzer.py agent.py .
+COPY schemas.py sanitizer.py collector.py analyzer.py notifier.py agent.py .
 
 # Chạy dưới quyền user non-root (uid 1000) để tuân thủ SecurityContext
 RUN useradd -m -u 1000 sreuser
 USER 1000
 
-CMD ["python3", "-u", "agent.py"]
+
+EXPOSE 8000
+CMD ["uvicorn", "agent:app", "--host", "0.0.0.0", "--port", "8000"]
