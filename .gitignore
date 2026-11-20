@@ -3,3 +3,7 @@ ingress-nginx/
 **/secret.yaml
 **/grafana-smtp-secret.yaml
 **/*secret.yaml
+
+.venv/
+__pycache__/
+*.pyc

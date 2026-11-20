@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-sre-agent
+  namespace: jobportal
+  labels:
+    app: ai-sre-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-sre-agent
+  template:
+    metadata:
+      labels:
+        app: ai-sre-agent
+    spec:
+      serviceAccountName: ai-sre-agent-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+      - name: ai-sre-agent
+        image: chausu/k8s-ai-sre-agent:v1
+        env:
+        - name: TARGET_NAMESPACE
+          value: "jobportal"
+        - name: TARGET_LABEL
+          value: "app=jobportal-backend"
+        - name: PROMETHEUS_URL
+          value: "https://metrics.chausu.name.vn"
+        - name: GEMINI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: ai-sre-secret
+              key: GEMINI_API_KEY
+        resources:
+          requests:
+            cpu: "50m"
+            memory: "128Mi"
+          limits:
+            cpu: "200m"
+            memory: "256Mi"
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false

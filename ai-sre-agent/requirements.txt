@@ -1,0 +1,4 @@
+kubernetes
+google-genai
+pydantic
+requests
