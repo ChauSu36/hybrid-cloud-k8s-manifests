@@ -17,3 +17,4 @@ resources:
   - rbac/jobportal-rbac.yaml
   - storage/backend-upload-pv.yaml
   - database/backend-upload-pvc.yaml
+  - networkpolicies/jobportal-networkpolicies.yaml
