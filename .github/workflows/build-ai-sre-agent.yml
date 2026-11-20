@@ -27,4 +27,4 @@ jobs:
         with:
           context: ./ai-sre-agent
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/k8s-ai-sre-agent:v1
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/k8s-ai-sre-agent:v2
