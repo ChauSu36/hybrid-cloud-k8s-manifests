@@ -1,0 +1,30 @@
+name: Build and Push AI-SRE Agent
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'ai-sre-agent/**'
+      - '.github/workflows/build-ai-sre-agent.yml'
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./ai-sre-agent
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/k8s-ai-sre-agent:v1
