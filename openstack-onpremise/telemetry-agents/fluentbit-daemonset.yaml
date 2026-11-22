@@ -1,4 +1,32 @@
 apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fluent-bit-sa
+  namespace: logging
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: fluent-bit-role
+rules:
+  - apiGroups: [""]
+    resources: ["namespaces", "pods"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: fluent-bit-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: fluent-bit-role
+subjects:
+  - kind: ServiceAccount
+    name: fluent-bit-sa
+    namespace: logging
+---
+apiVersion: v1
 kind: ConfigMap
 metadata:
   name: fluent-bit-config
@@ -32,14 +60,15 @@ data:
         K8S-Logging.Exclude Off
 
     [OUTPUT]
-        Name            es
-        Match           kube.*
-        Host            logs.chausu.name.vn
-        Port            443
-        TLS             On
-        Logstash_Format On
-        Logstash_Prefix k8s-logs
-        Retry_Limit     5
+        Name               es
+        Match              kube.*
+        Host               logs.chausu.name.vn
+        Port               443
+        TLS                On
+        Logstash_Format    On
+        Logstash_Prefix    k8s-logs
+        Suppress_Type_Name On
+        Retry_Limit        5
 
   parsers.conf: |
     [PARSER]
@@ -63,25 +92,26 @@ spec:
       labels:
         app: fluent-bit
     spec:
+      serviceAccountName: fluent-bit-sa
       containers:
-      - name: fluent-bit
-        image: fluent/fluent-bit:2.1.8
-        volumeMounts:
-        - name: config
-          mountPath: /fluent-bit/etc/
-        - name: varlog
-          mountPath: /var/log
-          readOnly: true
-        - name: varlibdockercontainers
-          mountPath: /var/lib/docker/containers
-          readOnly: true
+        - name: fluent-bit
+          image: fluent/fluent-bit:2.1.8
+          volumeMounts:
+            - name: config
+              mountPath: /fluent-bit/etc/
+            - name: varlog
+              mountPath: /var/log
+              readOnly: true
+            - name: varlibdockercontainers
+              mountPath: /var/lib/docker/containers
+              readOnly: true
       volumes:
-      - name: config
-        configMap:
-          name: fluent-bit-config
-      - name: varlog
-        hostPath:
-          path: /var/log
-      - name: varlibdockercontainers
-        hostPath:
-          path: /var/lib/docker/containers
+        - name: config
+          configMap:
+            name: fluent-bit-config
+        - name: varlog
+          hostPath:
+            path: /var/log
+        - name: varlibdockercontainers
+          hostPath:
+            path: /var/lib/docker/containers
