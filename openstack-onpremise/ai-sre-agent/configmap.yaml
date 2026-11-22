@@ -9,3 +9,4 @@ data:
   PROMETHEUS_URL: "https://metrics.chausu.name.vn"
   GRAFANA_URL: "https://grafana.chausu.name.vn"
   ELASTICSEARCH_URL: "https://logs.chausu.name.vn"
+  POLL_INTERVAL_SECONDS: "10"
