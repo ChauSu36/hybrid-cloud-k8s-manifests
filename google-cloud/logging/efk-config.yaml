@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: elk-config
+  namespace: logging
+data:
+  discovery.type: "single-node"
+  ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+  xpack.security.enabled: "true"
+  xpack.security.transport.ssl.enabled: "false"
+  xpack.security.authc.api_key.enabled: "true"
+  ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
