@@ -41,7 +41,7 @@ data:
     [INPUT]
         Name              tail
         Tag               kube.*
-        Path              /var/log/containers/*.log
+        Path              /var/log/containers/*_jobportal_*.log
         Parser            docker
         Refresh_Interval  5
         Mem_Buf_Limit     20MB
