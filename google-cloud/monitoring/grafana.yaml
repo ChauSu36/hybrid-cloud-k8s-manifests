@@ -1,0 +1,88 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grafana-data-pvc
+  namespace: monitoring
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: standard-rwo
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasource-config
+  namespace: monitoring
+data:
+  prometheus-datasource.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: http://central-prometheus-svc.monitoring.svc.cluster.local:9090
+        isDefault: true
+        editable: true
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      securityContext:
+        fsGroup: 472
+      containers:
+        - name: grafana
+          image: grafana/grafana:10.4.2
+          ports:
+            - containerPort: 3000
+              name: http
+          envFrom:
+            - configMapRef:
+                name: grafana-admin-config
+            - secretRef:
+                name: grafana-admin-secret
+            - configMapRef:
+                name: grafana-smtp-config
+                optional: true
+            - secretRef:
+                name: grafana-smtp-secret
+                optional: true
+          volumeMounts:
+            - name: grafana-storage
+              mountPath: /var/lib/grafana
+            - name: datasource-vol
+              mountPath: /etc/grafana/provisioning/datasources
+      volumes:
+        - name: grafana-storage
+          persistentVolumeClaim:
+            claimName: grafana-data-pvc
+        - name: datasource-vol
+          configMap:
+            name: grafana-datasource-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-svc
+  namespace: monitoring
+spec:
+  type: ClusterIP
+  selector:
+    app: grafana
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
