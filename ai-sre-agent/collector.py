@@ -1,3 +1,5 @@
+import os
+import requests
 from kubernetes import client, config
 from sanitizer import redact_sensitive_data
 
@@ -23,7 +25,43 @@ def _extract_container_statuses(pod) -> list:
             info["last_terminated"] = f"{cs.last_state.terminated.reason} (exit_code={cs.last_state.terminated.exit_code})"
         statuses.append(info)
     return statuses
+def fetch_elasticsearch_logs(namespace: str, pod_name: str, limit: int = 15) -> str:
+    es_url = os.getenv("ELASTICSEARCH_URL", "https://logs.chausu.name.vn").rstrip("/")
+    es_api_key = os.getenv("ELASTICSEARCH_API_KEY", "")
+    if not es_api_key:
+        return "Chưa cấu hình ELASTICSEARCH_API_KEY."
 
+    headers = {
+        "Authorization": f"ApiKey {es_api_key}",
+        "Content-Type": "application/json",
+    }
+    query = {
+        "size": limit,
+        "sort": [{"@timestamp": {"order": "desc"}}],
+        "query": {
+            "bool": {
+                "must": [
+                    {"match": {"kubernetes.namespace_name": namespace}},
+                    {"match": {"kubernetes.pod_name": pod_name}},
+                ]
+            }
+        },
+    }
+    try:
+        resp = requests.post(
+            f"{es_url}/k8s-logs-*/_search",
+            headers=headers,
+            json=query,
+            timeout=8,
+        )
+        resp.raise_for_status()
+        hits = resp.json().get("hits", {}).get("hits", [])
+        if not hits:
+            return "Không tìm thấy log lịch sử trên Elasticsearch."
+        lines = [h.get("_source", {}).get("log", "").strip() for h in reversed(hits)]
+        return redact_sensitive_data("\n".join(lines)[-2500:])
+    except Exception as e:
+        return f"Lỗi truy vấn Elasticsearch: {str(e)}"
 def collect_pod_diagnostics(v1: client.CoreV1Api, namespace: str, pod_name: str = None, label_selector: str = None) -> list:
     if pod_name:
         try:
@@ -50,10 +88,14 @@ def collect_pod_diagnostics(v1: client.CoreV1Api, namespace: str, pod_name: str 
         ][-10:]
 
         try:
-            raw_logs = v1.read_namespaced_pod_log(name=name, namespace=namespace, tail_lines=60)
-            clean_logs = redact_sensitive_data(raw_logs)
+            raw_logs = v1.read_namespaced_pod_log(name=name, namespace=namespace, tail_lines=20)
+            if raw_logs and raw_logs.strip():
+                clean_logs = redact_sensitive_data(raw_logs[-2500:])
+            else:
+                clean_logs = f"[Fallback Elasticsearch Logs]\n{fetch_elasticsearch_logs(namespace, name)}"
         except Exception as e:
-            clean_logs = f"Không thể đọc log container (Pod đang Waiting/Crash): {str(e)}"
+            es_fallback = fetch_elasticsearch_logs(namespace, name)
+            clean_logs = f"K8s API Log lỗi ({str(e)}). [Fallback Elasticsearch Logs]:\n{es_fallback}"
 
         diagnostics.append({
             "pod_name": name,
