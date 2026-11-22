@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ai-sre-agent
-  namespace: jobportal
+  namespace: monitoring
   labels:
     app: ai-sre-agent
 spec:

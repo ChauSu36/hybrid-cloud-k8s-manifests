@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ai-sre-agent
-  namespace: jobportal
+  namespace: monitoring
   labels:
     app: ai-sre-agent
 spec:
@@ -36,18 +36,11 @@ spec:
             port: 8000
           initialDelaySeconds: 5
           periodSeconds: 10
-        env:
-        - name: TARGET_NAMESPACE
-          value: "jobportal"
-        - name: TARGET_LABEL
-          value: "app=jobportal-backend"
-        - name: PROMETHEUS_URL
-          value: "https://metrics.chausu.name.vn"
-        - name: GEMINI_API_KEY
-          valueFrom:
-            secretKeyRef:
+        envFrom:
+        - configMapRef:
+            name: ai-sre-config
+        - secretRef:
               name: ai-sre-secret
-              key: GEMINI_API_KEY
         resources:
           requests:
             cpu: "50m"

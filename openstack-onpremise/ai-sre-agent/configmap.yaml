@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ai-sre-config
+  namespace: monitoring
+data:
+  TARGET_NAMESPACE: "jobportal"
+  TARGET_LABEL: "app=jobportal-backend"
+  PROMETHEUS_URL: "https://metrics.chausu.name.vn"
+  GRAFANA_URL: "https://grafana.chausu.name.vn"
+  ELASTICSEARCH_URL: "https://logs.chausu.name.vn"

@@ -7,3 +7,5 @@ ingress-nginx/
 .venv/
 __pycache__/
 *.pyc
+**/ai-sre-agent/secret.yaml
+**/ai-sre-agent/secret.yaml
