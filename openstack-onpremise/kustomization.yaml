@@ -18,3 +18,7 @@ resources:
   - storage/backend-upload-pv.yaml
   - database/backend-upload-pvc.yaml
   - networkpolicies/jobportal-networkpolicies.yaml
+  - ai-sre-agent/rbac.yaml
+  - ai-sre-agent/configmap.yaml
+  - ai-sre-agent/service.yaml
+  - ai-sre-agent/deployment.yaml
