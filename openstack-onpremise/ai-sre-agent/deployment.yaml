@@ -21,7 +21,7 @@ spec:
         runAsUser: 1000
       containers:
       - name: ai-sre-agent
-        image: chausu/k8s-ai-sre-agent:de765a876301bf4cd780f61a16dcd18165c12ab4
+        image: chausu/k8s-ai-sre-agent:557d5a10ffbfe3fb6bf0c5d2df980329f4bd1880
         ports:
         - containerPort: 8000
         livenessProbe:
