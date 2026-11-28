@@ -1,0 +1,11 @@
+apiVersion: 1
+contactPoints:
+    - orgId: 1
+      name: grafana-default-email
+      receivers:
+        - uid: ag51we2e8pddse
+          type: email
+          settings:
+            addresses: lesuchaule2020@gmail.com
+            singleEmail: false
+          disableResolveMessage: false
